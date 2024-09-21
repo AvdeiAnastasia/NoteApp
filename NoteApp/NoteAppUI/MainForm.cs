@@ -26,7 +26,9 @@ namespace NoteAppUI
         {
             InitializeComponent();
             InitializeMainRows();
-            _controller = new MainFormController(this, new Project());
+            var project = ProjectManager.LoadFromFile();
+            if (project == null) project = new Project();
+            _controller = new MainFormController(this, project);
         }
 
         public ListBox GetNotesListControl() 

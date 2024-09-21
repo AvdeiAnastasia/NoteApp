@@ -1,4 +1,6 @@
-﻿namespace NoteApp
+﻿using Newtonsoft.Json;
+
+namespace NoteApp
 {
     public class Note : ICloneable
     {
@@ -8,10 +10,12 @@
         ///<summary>
         ///Returns note's name
         ///</summary>
+        [JsonProperty]
         public string Name { get; private set; }
         ///<summary>
         ///Returns note's type
         ///</summary>
+        [JsonProperty]
         public NoteType Type { get; private set; }
         ///<summary>
         ///Returns note's text
@@ -20,12 +24,15 @@
         ///<summary>
         ///Returns note's time of creation
         ///</summary>
+        [JsonProperty]
         public DateTime CreatedDateTime { get; private set; }
         ///<summary>
         ///Returns note's time of last modification
         ///</summary>
+        [JsonProperty]
         public DateTime ModifiedDateTime { get; private set; }
 
+        [JsonProperty]
         private string[] _noteText;
 
         public Note(NoteType type) : this("Nameless Note", type) 
@@ -44,6 +51,16 @@
                 CreatedDateTime = DateTime.Now;
                 ModifiedDateTime = CreatedDateTime;
             }
+        }
+
+        [JsonConstructor]
+        private Note(string name, NoteType type, DateTime creationTime, DateTime modified, string[] noteText) 
+        { 
+            Name=name;
+            Type = type;
+            CreatedDateTime=creationTime;
+            ModifiedDateTime=modified;
+            _noteText = noteText;
         }
 
         ///<summary>

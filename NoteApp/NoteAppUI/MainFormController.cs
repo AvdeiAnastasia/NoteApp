@@ -14,9 +14,11 @@ namespace NoteAppUI
             _project = currentProject;
             AddNewFileHandler(mainForm);
             AddNoteCreationHandler(currentProject, mainForm);
+            AddSaveFileHandler(mainForm);
             AddNoteSelectionHandler();
             ParseNoteTypes();
             AddEditHandler(currentProject);
+            UpdateNoteList(currentProject);
         }
 
         private void AddNewFileHandler(MainForm form) 
@@ -24,6 +26,13 @@ namespace NoteAppUI
             var mainMenu = form.GetMainMenu();
             var newFileMenu = ((ToolStripMenuItem) mainMenu.Items[0]).DropDownItems[0];
             newFileMenu.Click += (sender, args) => _project.CreateNote("Nameless", NoteType.Misc);
+        }
+
+        private void AddSaveFileHandler(MainForm form) 
+        {
+            var mainMenu = form.GetMainMenu();
+            var SaveFileMenu = ((ToolStripMenuItem)mainMenu.Items[0]).DropDownItems[1];
+            SaveFileMenu.Click += (sender, args) => ProjectManager.SaveToFile(_project);
         }
 
         private void AddNoteCreationHandler(Project project, MainForm form) 
