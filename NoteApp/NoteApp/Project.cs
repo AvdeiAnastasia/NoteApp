@@ -1,46 +1,127 @@
 ﻿using Newtonsoft.Json;
+using System.ComponentModel;
 
 namespace NoteApp
 {
-    public class Project
-    {
-        public delegate void NoteChanged();
-        public event NoteChanged? OnNoteChanged;
+    public class Project : INotifyPropertyChanged
+    { 
+        /// <summary>
+        /// event для обновления свойств
+        /// </summary>
+        public event PropertyChangedEventHandler? PropertyChanged;
+  
+        
+        private List<Note> _notes = new();
+        private List<Note> _filteredNotes = new();
+        private List<string> _noteTypeList = new();
 
-        [JsonProperty]
-        private List<Note> _notes;
-        public IEnumerable<Note> Notes => _notes.OrderBy(x => x.CreatedDateTime);
-
+        private Note? _selectedNote;
+        
+        
+        /// <summary>
+        /// .ctor
+        /// </summary>
         public Project() 
         { 
-            _notes = new List<Note>();
+            Notes = new List<Note>();
+            if (_noteTypeList.Count == 0)
+                NoteTypeList = Enum.GetValues(typeof(NoteType))
+                    .Cast<NoteType>()
+                    .Select(v => v.ToString())
+                    .ToList();
+        }
+        
+        /// <summary>
+        /// Список заметок
+        /// </summary>
+        [JsonProperty]
+        public List<Note> Notes
+        {
+            get => _notes;
+            set
+            {
+                _notes = value;
+                OnPropertyChanged(nameof(Notes));
+            }
         }
 
-        public Note CreateNote(string name, NoteType type) 
+        /// <summary>
+        /// Список отфильтрованных заметок
+        /// </summary>
+        [JsonIgnore]
+        public List<Note> FilteredNotes
         {
-            var note = new Note(name, type);
-            _notes.Add(note);
-            note.OnStateChanged += () => OnNoteChanged?.Invoke();
-            OnNoteChanged.Invoke();
+            get => _filteredNotes;
+            set
+            {
+                _filteredNotes= value;
+                OnPropertyChanged(nameof(FilteredNotes));
+            }
+        }
+
+
+        /// <summary>
+        /// Создание заметки
+        /// </summary>
+        /// <returns></returns>
+        public Note CreateNote() 
+        {
+            var note = new Note("Временное название", NoteType.Misc);
+            Notes.Add(note);
             return note;
         }
 
+        /// <summary>
+        /// Удаление заметки
+        /// </summary>
+        /// <param name="note"></param>
         public void RemoveNote(Note note) 
         { 
             _notes.Remove(note);
         }
 
-        public IEnumerable<Note> FindNotesByName(string name) 
-        { 
-            return _notes.Where(x => x.Name == name);
+        /// <summary>
+        /// Список типов заметок
+        /// </summary>
+        [JsonIgnore]
+        public List<string> NoteTypeList 
+        {
+            get => _noteTypeList;
+            set
+            {
+                _noteTypeList = value;
+                OnPropertyChanged(nameof(NoteTypeList));
+            }
         }
 
-        private void OnAfterDeserialize() 
+        /// <summary>
+        /// Получить список заметок с типом All
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<string> GetNoteTypeListWithAll()
         {
-            foreach (var note in _notes) 
-            { 
-                note.OnStateChanged += () => OnNoteChanged?.Invoke();
+            var list = new List<string>(NoteTypeList) { "All" };
+            return list;
+        }
+
+        /// <summary>
+        /// Выбранная заметка
+        /// </summary>
+        [JsonIgnore]
+        public Note? SelectedNote
+        { 
+            get => _selectedNote;
+            set
+            {
+                _selectedNote = value;
+                OnPropertyChanged(nameof(SelectedNote));
             }
+        }
+
+
+        private void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

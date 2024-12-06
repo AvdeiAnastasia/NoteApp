@@ -2,12 +2,12 @@
 {
     public enum NoteType
     {
-        Work,
-        Home,
-        HealthAndSport,
-        People,
-        Documents,
-        Finances,
-        Misc
+        Work = 1,
+        Home = 2,
+        HealthAndSport =3,
+        People =4,
+        Documents =5,
+        Finances =6,
+        Misc =7
     }
 }

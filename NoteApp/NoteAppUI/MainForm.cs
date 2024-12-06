@@ -5,377 +5,193 @@ namespace NoteAppUI
 {
     public partial class MainForm : Form
     {
-        private TableLayoutPanel _mainRows;
-        private MenuStrip _mainMenu;
-        private Panel _mainPanel;
-        private Panel _leftColumn;
-        private Panel _rightColumn;
-        private ComboBox _noteTypeFilter;
-        private ListBox _notes;
-        private RichTextBox _noteText;
-        private Label _noteName;
-        private Label _noteCategoryData;
-        private Label _noteCreatedText;
-        private Label _noteModifiedText;
-        private ComboBox _noteCreatedDate;
-        private ComboBox _noteModifiedDate;
-
-        private MainFormController _controller;
+        private readonly Project _project;
+        private readonly FileRepository _fileRepository = new();
 
         public MainForm()
         {
             InitializeComponent();
-            InitializeMainRows();
-            var project = ProjectManager.LoadFromFile();
-            if (project == null) project = new Project();
-            _controller = new MainFormController(this, project);
+            var project = _fileRepository.LoadProject();
+            project ??= new Project();
+            _project = project!;
+
+            CategoryComboBox.DataSource = _project.GetNoteTypeListWithAll().OrderBy(x => x).ToList();
+            SetBinding();
+            SetBindingNoteListBox();
+
+
+            addNoteToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.N;
+            editNoteToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.R;
+            removeNoteToolStripMenuItem.ShortcutKeys = Keys.Delete;
+            aboutToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.O;
+            exitToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Q;
         }
 
-        public ListBox GetNotesListControl() 
-        { 
-            return _notes;
-        }
-
-        public ComboBox GetNoteTypeFilterControl() 
-        {  
-            return _noteTypeFilter; 
-        }
-
-        public RichTextBox GetNoteTextControl() 
-        { 
-            return _noteText;
-        }
-
-        public MenuStrip GetMainMenu() 
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            return _mainMenu;
+            _fileRepository.SaveProject(_project);
         }
 
-        public ComboBox GetNoteTypeFilter() 
+
+        private void addNoteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            return _noteTypeFilter;
+            AddNote();
         }
 
-        public Label GetNoteNameControl() 
+        private void NoteListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            return _noteName;
+            ChangeNote();
         }
 
-        public Label GetNoteCategoryControl()
+        private void editNoteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            return _noteCategoryData;
+            EditNote();
         }
 
-        public ComboBox GetNoteCreatedDateControl() 
+        private void removeNoteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            return _noteCreatedDate;
+            DeleteNote();
         }
 
-        public ComboBox GetNoteModifiedDateControl()
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            return _noteModifiedDate;
+            Close();
         }
 
-        private void MainForm_Load(object sender, EventArgs e)
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            new AboutForm().ShowDialog();
         }
 
-        private void InitializeComponent()
+
+        private void EditButton_Click(object sender, EventArgs e)
         {
-            SuspendLayout();
-            // 
-            // MainForm
-            // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1024, 768);
-            Name = "MainForm";
-            Text = "NoteApp";
-            ResumeLayout(false);
+            EditNote();
         }
 
-        private void InitializeMainRows() 
+        private void DeleteButton_Click(object sender, EventArgs e)
         {
-            _mainRows = new TableLayoutPanel
-            {
-                Dock = DockStyle.Fill,
-                RowCount = 2,
-                ColumnCount = 1,
-            };
-            _mainRows.RowStyles.Add(new RowStyle(SizeType.Percent, 5F));
-            _mainRows.RowStyles.Add(new RowStyle(SizeType.Percent, 95F));
-            Controls.Add(_mainRows);
-            InitializeMainMenu(_mainRows);
-            InitializeMainPanel(_mainRows);
+            DeleteNote();
         }
 
-        private void InitializeMainMenu(TableLayoutPanel mainRows) 
+        private void AddButton_Click(object sender, EventArgs e)
         {
-            var newFileMenu = new ToolStripMenuItem
-            {
-                Name = "newFileMenu",
-                Dock = DockStyle.Fill,
-                Text = "New",
-                ShortcutKeyDisplayString = "Ctrl + N"
-            };
-            var saveMenu = new ToolStripMenuItem
-            {
-                Name = "saveMenu",
-                Dock = DockStyle.Fill,
-                Text = "Save",
-                ShortcutKeyDisplayString = "Ctrl + S"
-            };
-            var fileMenu = new ToolStripMenuItem
-            {
-                Name = "FileMenu",
-                Dock = DockStyle.Fill,
-                Text = "File",
-                DropDownItems = { newFileMenu, saveMenu }
-            };
-
-
-            var renameMenu = new ToolStripMenuItem
-            {
-                Name = "RenameMenu",
-                Dock = DockStyle.Fill,
-                Text = "Rename"
-            };
-            var deleteMenu = new ToolStripMenuItem
-            {
-                Name = "DeleteMenu",
-                Dock = DockStyle.Fill,
-                Text = "Delete",
-                ShortcutKeyDisplayString = "Del"
-            };
-            var editMenu = new ToolStripMenuItem 
-            {
-                Name = "EditMenu",
-                Dock = DockStyle.Fill,
-                Text = "Edit",
-                DropDownItems = { renameMenu, deleteMenu }
-            };
-
-            var helpMenu = new ToolStripMenuItem
-            {
-                Name = "HelpMenu",
-                Dock = DockStyle.Fill,
-                Text = "Help",
-            };
-
-            _mainMenu = new MenuStrip
-            {
-                Name = "MainMenuToolbar",
-                Dock = DockStyle.Fill,
-            };
-            _mainMenu.Items.AddRange(new ToolStripMenuItem[] { fileMenu, editMenu, helpMenu });
-            mainRows.SetRow(_mainMenu, 0);
-            mainRows.Controls.Add(_mainMenu);
+            AddNote();
         }
 
-        private void InitializeMainPanel(TableLayoutPanel mainRows)
+        private void NoteListBox_DoubleClick(object sender, EventArgs e)
         {
-            _mainPanel = new Panel { Dock = DockStyle.Fill };
-            mainRows.SetRow(_mainPanel, 1);
-            mainRows.Controls.Add(_mainPanel);
-
-            var twoColumnsTableLayout = new TableLayoutPanel 
-            { 
-                Dock = DockStyle.Fill,
-                RowCount = 1,
-                ColumnCount = 2,
-            };
-            twoColumnsTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33F));
-            twoColumnsTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 66F));
-            _mainPanel.Controls.Add(twoColumnsTableLayout);
-            InitializeLeftColumn(twoColumnsTableLayout);
-            InitializeRightColumn(twoColumnsTableLayout);
+            EditNote();
         }
 
-        private void InitializeLeftColumn(TableLayoutPanel twoColumnTable) 
+        private void CategoryComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _leftColumn = new Panel { Dock = DockStyle.Fill };
-            twoColumnTable.SetColumn(_leftColumn, 0);
-            twoColumnTable.Controls.Add(_leftColumn);
-
-            var leftColumnTableLayout = new TableLayoutPanel
+            var item = CategoryComboBox.SelectedItem?.ToString()?.ToLower();
+            if (item == null || item.Equals("all", StringComparison.OrdinalIgnoreCase))
             {
-                Dock = DockStyle.Fill,
-                RowCount = 3,
-                ColumnCount = 1,
-            };
-            leftColumnTableLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 7F));
-            leftColumnTableLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 80F));
-            leftColumnTableLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 13F));
+                _project.FilteredNotes = _project.Notes;
+            }
+            else
 
-            _leftColumn.Controls.Add(leftColumnTableLayout);
+            {
+                _project.FilteredNotes = _project.Notes.Where(x => x.Type.ToString().ToLower() == item).ToList();
+            }
 
-            InitializeNoteTypeBox(leftColumnTableLayout);
-            InitializeNoteList(leftColumnTableLayout);
+            ChangeNote();
+            SetBindingNoteListBox();
         }
 
-        private void InitializeNoteTypeBox(TableLayoutPanel leftColumnTableLayout)
+        /// <summary>
+        /// Смена заметки
+        /// </summary>
+        private void ChangeNote()
         {
-            _noteTypeFilter = new ComboBox { Dock = DockStyle.Fill};
-            var noteCategory = new Label
-            {
-                Name = "NoteCategory",
-                Text = "Show Category:",
-                Dock = DockStyle.Fill
-            };
-            var categoryFilterPanel = new Panel { Dock = DockStyle.Fill };
-            var categoryFilterLayout = new TableLayoutPanel
-            {
-                Dock = DockStyle.Fill,
-                RowCount = 1,
-                ColumnCount = 2
-            };
-            categoryFilterLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            categoryFilterLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 75));
-
-            leftColumnTableLayout.SetRow(categoryFilterPanel, 0);
-            leftColumnTableLayout.Controls.Add(categoryFilterPanel);
-
-            categoryFilterPanel.Controls.Add(categoryFilterLayout);
-            categoryFilterLayout.SetColumn(noteCategory, 0);
-            categoryFilterLayout.SetColumn(_noteTypeFilter, 1);
-            categoryFilterLayout.Controls.AddRange(new Control[] { noteCategory, _noteTypeFilter });
+            var item = NotelistBox.SelectedItem;
+            _project.SelectedNote = item is not Note note ? null : note;
+            SetDate(CreateDatePicker, _project.SelectedNote?.CreatedDateTime);
+            SetDate(ModifiedDatePicker, _project.SelectedNote?.ModifiedDateTime);
+            SetBinding();
         }
 
-        private void InitializeNoteList(TableLayoutPanel leftColumnTableLayout)
+        /// <summary>
+        /// Установка дат в DatePicker
+        /// </summary>
+        /// <param name="dateTimePicker"></param>
+        /// <param name="dateTime"></param>
+        private void SetDate(DateTimePicker dateTimePicker, DateTime? dateTime)
         {
-            _notes = new ListBox
+            if (dateTime == null)
             {
-                Name = "AvailableNotes",
-                Dock = DockStyle.Fill
-            };
-
-            leftColumnTableLayout.SetRow(_notes, 1);
-            leftColumnTableLayout.Controls.Add(_notes);
+                dateTimePicker.CustomFormat = " ";
+                dateTimePicker.Format = DateTimePickerFormat.Custom;
+            }
+            else
+            {
+                dateTimePicker.CustomFormat = "dd/MM/yyyy hh:mm:ss";
+                dateTimePicker.Value = dateTime.Value;
+            }
         }
 
-        private void InitializeRightColumn(TableLayoutPanel twoColumnTable)
+
+        /// <summary>
+        /// Редактирование заметки 
+        /// </summary>
+        private void EditNote()
         {
-            _rightColumn = new Panel { Dock = DockStyle.Fill };
-            twoColumnTable.SetColumn(_rightColumn, 1);
-            twoColumnTable.Controls.Add(_rightColumn);
+            _project.SelectedNote ??= _project.CreateNote();
 
-            var twoRowsLayout = new TableLayoutPanel 
-            { 
-                Dock = DockStyle.Fill,
-                RowCount = 2,
-                ColumnCount = 1
-            };
-            twoRowsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            twoRowsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 80F));
+            var noteEditForm = new NoteEditForm(_project);
 
-            _rightColumn.Controls.Add(twoRowsLayout);
-            InitializeNoteDataPanel(twoRowsLayout);
-            InitializeTextBox(twoRowsLayout);
-
+            noteEditForm.ShowDialog();
+            CategoryComboBox.DataSource = _project.GetNoteTypeListWithAll().OrderBy(x => x).ToList();
         }
 
-        private void InitializeNoteDataPanel(TableLayoutPanel twoRowsPanel) 
+        /// <summary>
+        /// Добавление заметки
+        /// </summary>
+        private void AddNote()
         {
-            _noteName = new Label
-            {
-                Dock = DockStyle.Fill,
-                Text = "PlaceHolder",
-                Font = new Font(Name = "Segoe UI", 14, FontStyle.Bold, GraphicsUnit.Point)
-            };
-
-            _noteCategoryData = new Label
-            { 
-                Dock = DockStyle.Fill,
-                Text = "Category: "
-            };
-
-            var threeRowsLayout = new TableLayoutPanel
-            {
-                Dock = DockStyle.Fill,
-                RowCount = 3,
-                ColumnCount = 1
-            };
-
-            threeRowsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 40F));
-            threeRowsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 30F));
-            threeRowsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 30F));
-
-            twoRowsPanel.SetRow(threeRowsLayout, 0);
-            twoRowsPanel.Controls.Add(threeRowsLayout);
-
-            threeRowsLayout.SetRow(_noteName, 0);
-            threeRowsLayout.Controls.Add(_noteName);
-            threeRowsLayout.SetRow(_noteCategoryData, 1);
-            threeRowsLayout.Controls.Add(_noteCategoryData);
-
-            var noteChangesData = new TableLayoutPanel
-            {
-                Dock = DockStyle.Fill,
-                RowCount = 1,
-                ColumnCount = 5
-            };
-
-            threeRowsLayout.SetRow(noteChangesData, 2);
-            threeRowsLayout.Controls.Add(noteChangesData);
-            noteChangesData.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 5F));
-            noteChangesData.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
-            noteChangesData.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 5F));
-            noteChangesData.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
-            noteChangesData.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            InitializeNoteDataControls(noteChangesData);
+            _project.SelectedNote = _project.CreateNote();
+            CategoryComboBox.DataSource = _project.GetNoteTypeListWithAll().OrderBy(x => x).ToList();
         }
 
-        private void InitializeNoteDataControls(TableLayoutPanel noteChangesData) 
+        /// <summary>
+        /// Удаление заметки
+        /// </summary>
+        private void DeleteNote()
         {
-            _noteCreatedText = new Label
-            {
-                Dock = DockStyle.Fill,
-                Text = "Created: "
-            };
-
-            _noteModifiedText = new Label
-            { 
-                Dock = DockStyle.Fill,
-                Text = "Modified: "
-            };
-
-            _noteCreatedDate = new ComboBox
-            {
-                Dock = DockStyle.Fill,
-                Enabled = false,
-            };
-
-            _noteModifiedDate = new ComboBox
-            {
-                Dock = DockStyle.Fill,
-                Enabled= false,
-            };
-
-            noteChangesData.SetColumn(_noteCreatedText, 0);
-            noteChangesData.SetColumn(_noteCreatedDate, 1);
-            noteChangesData.SetColumn(_noteModifiedText, 2);
-            noteChangesData.SetColumn(_noteModifiedDate, 3);
-            noteChangesData.Controls.AddRange(new Control[]
-            {
-                _noteCreatedText,
-                _noteCreatedDate,
-                _noteModifiedText,
-                _noteModifiedDate,
-            });
+            if (_project.SelectedNote == null) return;
+            _project.RemoveNote(_project.SelectedNote);
+            NotelistBox.DataSource = null;
+            NotelistBox.DataSource = _project.Notes;
         }
 
-        private void InitializeTextBox(TableLayoutPanel twoRowsPanel) 
+        /// <summary>
+        /// Установка зависимостей для списка заметок
+        /// </summary>
+        private void SetBindingNoteListBox()
         {
-            _noteText = new RichTextBox
-            {
-                Dock = DockStyle.Fill,
-                ScrollBars = RichTextBoxScrollBars.ForcedBoth,
-                Multiline = true,
-                Enabled = false
-            };
-            twoRowsPanel.SetRow(_noteText, 1);
-            twoRowsPanel.Controls.Add(_noteText);
+            NotelistBox.DataSource = null;
+            var binding = new BindingList<Note>(_project.FilteredNotes);
+            var bSource = new BindingSource();
+            bSource.DataSource = binding;
+            NotelistBox.DataSource = bSource;
+            NotelistBox.DisplayMember = "Name";
+        }
+
+        /// <summary>
+        /// Установка зависимостей
+        /// </summary>
+        private void SetBinding()
+        {
+            if (_project.SelectedNote == null)
+                return;
+            NoteRichTextBox.DataBindings.Clear();
+            NoteRichTextBox.DataBindings.Add("Text", _project.SelectedNote, "NoteText");
+            TitleLabel.DataBindings.Clear();
+            TitleLabel.DataBindings.Add("Text", _project.SelectedNote, "Name");
+            CategoryLabel.DataBindings.Clear();
+            CategoryLabel.DataBindings.Add("Text", _project.SelectedNote, "Type");
         }
     }
 }
