@@ -33,10 +33,10 @@
             AuthorLabel = new Label();
             EmailValueLabel = new Label();
             EmailLabel = new Label();
-            GitHubValueLabel = new Label();
             GitHubLabel = new Label();
             InfoLabel = new Label();
             VersionLabel = new Label();
+            GitHubLinkLabel = new LinkLabel();
             SuspendLayout();
             // 
             // TItleAppLabel
@@ -85,15 +85,6 @@
             EmailLabel.TabIndex = 4;
             EmailLabel.Text = "e-mail for feeback: ";
             // 
-            // GitHubValueLabel
-            // 
-            GitHubValueLabel.AutoSize = true;
-            GitHubValueLabel.Location = new Point(400, 360);
-            GitHubValueLabel.Name = "GitHubValueLabel";
-            GitHubValueLabel.Size = new Size(97, 41);
-            GitHubValueLabel.TabIndex = 5;
-            GitHubValueLabel.Text = "label6";
-            // 
             // GitHubLabel
             // 
             GitHubLabel.AutoSize = true;
@@ -121,6 +112,16 @@
             VersionLabel.TabIndex = 8;
             VersionLabel.Text = "label9";
             // 
+            // GitHubLinkLabel
+            // 
+            GitHubLinkLabel.AutoSize = true;
+            GitHubLinkLabel.Location = new Point(400, 360);
+            GitHubLinkLabel.Name = "GitHubLinkLabel";
+            GitHubLinkLabel.Size = new Size(150, 41);
+            GitHubLinkLabel.TabIndex = 9;
+            GitHubLinkLabel.TabStop = true;
+            GitHubLinkLabel.Text = "linkLabel1";
+            // 
             // AboutForm
             // 
             AutoScaleDimensions = new SizeF(17F, 41F);
@@ -128,10 +129,10 @@
             AutoSize = true;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
             ClientSize = new Size(1027, 666);
+            Controls.Add(GitHubLinkLabel);
             Controls.Add(VersionLabel);
             Controls.Add(InfoLabel);
             Controls.Add(GitHubLabel);
-            Controls.Add(GitHubValueLabel);
             Controls.Add(EmailLabel);
             Controls.Add(EmailValueLabel);
             Controls.Add(AuthorLabel);
@@ -150,9 +151,9 @@
         private Label AuthorLabel;
         private Label EmailValueLabel;
         private Label EmailLabel;
-        private Label GitHubValueLabel;
         private Label GitHubLabel;
         private Label InfoLabel;
         private Label VersionLabel;
+        private LinkLabel GitHubLinkLabel;
     }
 }

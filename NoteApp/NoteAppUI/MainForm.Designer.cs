@@ -78,7 +78,8 @@
             menuStrip.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, editToolStripMenuItem, helpToolStripMenuItem });
             menuStrip.Location = new Point(0, 0);
             menuStrip.Name = "menuStrip";
-            menuStrip.Size = new Size(2176, 49);
+            menuStrip.Padding = new Padding(3, 1, 0, 1);
+            menuStrip.Size = new Size(905, 26);
             menuStrip.TabIndex = 0;
             menuStrip.Text = "menuStrip1";
             // 
@@ -86,13 +87,13 @@
             // 
             fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { exitToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            fileToolStripMenuItem.Size = new Size(87, 45);
+            fileToolStripMenuItem.Size = new Size(46, 24);
             fileToolStripMenuItem.Text = "File";
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new Size(230, 54);
+            exitToolStripMenuItem.Size = new Size(116, 26);
             exitToolStripMenuItem.Text = "Exit";
             exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
             // 
@@ -100,27 +101,27 @@
             // 
             editToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { addNoteToolStripMenuItem, editNoteToolStripMenuItem, removeNoteToolStripMenuItem });
             editToolStripMenuItem.Name = "editToolStripMenuItem";
-            editToolStripMenuItem.Size = new Size(92, 45);
+            editToolStripMenuItem.Size = new Size(49, 24);
             editToolStripMenuItem.Text = "Edit";
             // 
             // addNoteToolStripMenuItem
             // 
             addNoteToolStripMenuItem.Name = "addNoteToolStripMenuItem";
-            addNoteToolStripMenuItem.Size = new Size(365, 54);
+            addNoteToolStripMenuItem.Size = new Size(183, 26);
             addNoteToolStripMenuItem.Text = "Add Note";
             addNoteToolStripMenuItem.Click += addNoteToolStripMenuItem_Click;
             // 
             // editNoteToolStripMenuItem
             // 
             editNoteToolStripMenuItem.Name = "editNoteToolStripMenuItem";
-            editNoteToolStripMenuItem.Size = new Size(365, 54);
+            editNoteToolStripMenuItem.Size = new Size(183, 26);
             editNoteToolStripMenuItem.Text = "Edit Note";
             editNoteToolStripMenuItem.Click += editNoteToolStripMenuItem_Click;
             // 
             // removeNoteToolStripMenuItem
             // 
             removeNoteToolStripMenuItem.Name = "removeNoteToolStripMenuItem";
-            removeNoteToolStripMenuItem.Size = new Size(365, 54);
+            removeNoteToolStripMenuItem.Size = new Size(183, 26);
             removeNoteToolStripMenuItem.Text = "Remove Note";
             removeNoteToolStripMenuItem.Click += removeNoteToolStripMenuItem_Click;
             // 
@@ -128,13 +129,13 @@
             // 
             helpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { aboutToolStripMenuItem });
             helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            helpToolStripMenuItem.Size = new Size(104, 45);
+            helpToolStripMenuItem.Size = new Size(55, 24);
             helpToolStripMenuItem.Text = "Help";
             // 
             // aboutToolStripMenuItem
             // 
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Size = new Size(266, 54);
+            aboutToolStripMenuItem.Size = new Size(133, 26);
             aboutToolStripMenuItem.Text = "About";
             aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
             // 
@@ -155,37 +156,44 @@
             panel.Controls.Add(CategoryComboBox);
             panel.Controls.Add(ShowCategoryLabel);
             panel.Dock = DockStyle.Fill;
-            panel.Location = new Point(0, 49);
+            panel.Location = new Point(0, 26);
+            panel.Margin = new Padding(1);
             panel.Name = "panel";
-            panel.Size = new Size(2176, 995);
+            panel.Size = new Size(905, 483);
             panel.TabIndex = 1;
             // 
             // DeleteButton
             // 
-            DeleteButton.Image = Properties.Resources.remove_icon;
-            DeleteButton.Location = new Point(140, 900);
+            DeleteButton.BackgroundImage = Properties.Resources.remove_icon;
+            DeleteButton.BackgroundImageLayout = ImageLayout.Zoom;
+            DeleteButton.Location = new Point(66, 439);
+            DeleteButton.Margin = new Padding(1);
             DeleteButton.Name = "DeleteButton";
-            DeleteButton.Size = new Size(60, 70);
+            DeleteButton.Size = new Size(28, 34);
             DeleteButton.TabIndex = 4;
             DeleteButton.UseVisualStyleBackColor = true;
             DeleteButton.Click += DeleteButton_Click;
             // 
             // NoteRichTextBox
             // 
+            NoteRichTextBox.BorderStyle = BorderStyle.FixedSingle;
             NoteRichTextBox.Enabled = false;
-            NoteRichTextBox.Location = new Point(666, 311);
+            NoteRichTextBox.Location = new Point(313, 152);
+            NoteRichTextBox.Margin = new Padding(1);
             NoteRichTextBox.Name = "NoteRichTextBox";
             NoteRichTextBox.ReadOnly = true;
-            NoteRichTextBox.Size = new Size(1407, 544);
+            NoteRichTextBox.Size = new Size(664, 267);
             NoteRichTextBox.TabIndex = 12;
             NoteRichTextBox.Text = "";
             // 
             // EditButton
             // 
-            EditButton.Image = Properties.Resources.edit_icon;
-            EditButton.Location = new Point(70, 900);
+            EditButton.BackgroundImage = Properties.Resources.edit_icon;
+            EditButton.BackgroundImageLayout = ImageLayout.Zoom;
+            EditButton.Location = new Point(33, 439);
+            EditButton.Margin = new Padding(1);
             EditButton.Name = "EditButton";
-            EditButton.Size = new Size(60, 70);
+            EditButton.Size = new Size(28, 34);
             EditButton.TabIndex = 3;
             EditButton.UseVisualStyleBackColor = true;
             EditButton.Click += EditButton_Click;
@@ -194,18 +202,21 @@
             // 
             TitleLabel.AutoSize = true;
             TitleLabel.Font = new Font("Segoe UI", 14.1F, FontStyle.Italic, GraphicsUnit.Point, 204);
-            TitleLabel.Location = new Point(666, 37);
+            TitleLabel.Location = new Point(313, 18);
+            TitleLabel.Margin = new Padding(1, 0, 1, 0);
             TitleLabel.Name = "TitleLabel";
-            TitleLabel.Size = new Size(435, 62);
+            TitleLabel.Size = new Size(225, 32);
             TitleLabel.TabIndex = 11;
             TitleLabel.Text = "Название заметки";
             // 
             // AddButton
             // 
-            AddButton.Image = Properties.Resources.add_icon;
-            AddButton.Location = new Point(0, 900);
+            AddButton.BackgroundImage = Properties.Resources.add_icon;
+            AddButton.BackgroundImageLayout = ImageLayout.Zoom;
+            AddButton.Location = new Point(0, 439);
+            AddButton.Margin = new Padding(1);
             AddButton.Name = "AddButton";
-            AddButton.Size = new Size(60, 70);
+            AddButton.Size = new Size(28, 34);
             AddButton.TabIndex = 2;
             AddButton.UseVisualStyleBackColor = true;
             AddButton.Click += AddButton_Click;
@@ -213,9 +224,10 @@
             // CategoryLabel
             // 
             CategoryLabel.AutoSize = true;
-            CategoryLabel.Location = new Point(841, 155);
+            CategoryLabel.Location = new Point(396, 76);
+            CategoryLabel.Margin = new Padding(1, 0, 1, 0);
             CategoryLabel.Name = "CategoryLabel";
-            CategoryLabel.Size = new Size(0, 41);
+            CategoryLabel.Size = new Size(0, 20);
             CategoryLabel.TabIndex = 10;
             // 
             // ModifiedDatePicker
@@ -223,9 +235,10 @@
             ModifiedDatePicker.CustomFormat = "MM/dd/yyyy hh:mm:ss";
             ModifiedDatePicker.Enabled = false;
             ModifiedDatePicker.Format = DateTimePickerFormat.Custom;
-            ModifiedDatePicker.Location = new Point(1416, 237);
+            ModifiedDatePicker.Location = new Point(666, 116);
+            ModifiedDatePicker.Margin = new Padding(1);
             ModifiedDatePicker.Name = "ModifiedDatePicker";
-            ModifiedDatePicker.Size = new Size(369, 47);
+            ModifiedDatePicker.Size = new Size(176, 27);
             ModifiedDatePicker.TabIndex = 9;
             // 
             // CreateDatePicker
@@ -233,45 +246,49 @@
             CreateDatePicker.CustomFormat = "MM/dd/yyyy hh:mm:ss";
             CreateDatePicker.Enabled = false;
             CreateDatePicker.Format = DateTimePickerFormat.Custom;
-            CreateDatePicker.Location = new Point(818, 237);
+            CreateDatePicker.Location = new Point(385, 116);
+            CreateDatePicker.Margin = new Padding(1);
             CreateDatePicker.Name = "CreateDatePicker";
-            CreateDatePicker.Size = new Size(369, 47);
+            CreateDatePicker.Size = new Size(176, 27);
             CreateDatePicker.TabIndex = 8;
             // 
             // ModifiedDescriptionLabel
             // 
             ModifiedDescriptionLabel.AutoSize = true;
-            ModifiedDescriptionLabel.Location = new Point(1249, 237);
+            ModifiedDescriptionLabel.Location = new Point(588, 116);
+            ModifiedDescriptionLabel.Margin = new Padding(1, 0, 1, 0);
             ModifiedDescriptionLabel.Name = "ModifiedDescriptionLabel";
-            ModifiedDescriptionLabel.Size = new Size(145, 41);
+            ModifiedDescriptionLabel.Size = new Size(73, 20);
             ModifiedDescriptionLabel.TabIndex = 7;
             ModifiedDescriptionLabel.Text = "Modified:";
             // 
             // CreatedDescriptionLabel
             // 
             CreatedDescriptionLabel.AutoSize = true;
-            CreatedDescriptionLabel.Location = new Point(666, 237);
+            CreatedDescriptionLabel.Location = new Point(313, 116);
+            CreatedDescriptionLabel.Margin = new Padding(1, 0, 1, 0);
             CreatedDescriptionLabel.Name = "CreatedDescriptionLabel";
-            CreatedDescriptionLabel.Size = new Size(129, 41);
+            CreatedDescriptionLabel.Size = new Size(64, 20);
             CreatedDescriptionLabel.TabIndex = 6;
             CreatedDescriptionLabel.Text = "Created:";
             // 
             // CategoryDescriptionLabel
             // 
             CategoryDescriptionLabel.AutoSize = true;
-            CategoryDescriptionLabel.Location = new Point(666, 155);
+            CategoryDescriptionLabel.Location = new Point(313, 76);
+            CategoryDescriptionLabel.Margin = new Padding(1, 0, 1, 0);
             CategoryDescriptionLabel.Name = "CategoryDescriptionLabel";
-            CategoryDescriptionLabel.Size = new Size(146, 41);
+            CategoryDescriptionLabel.Size = new Size(72, 20);
             CategoryDescriptionLabel.TabIndex = 5;
             CategoryDescriptionLabel.Text = "Category:";
             // 
             // NotelistBox
             // 
             NotelistBox.FormattingEnabled = true;
-            NotelistBox.ItemHeight = 41;
-            NotelistBox.Location = new Point(51, 113);
+            NotelistBox.Location = new Point(24, 55);
+            NotelistBox.Margin = new Padding(1);
             NotelistBox.Name = "NotelistBox";
-            NotelistBox.Size = new Size(514, 742);
+            NotelistBox.Size = new Size(244, 364);
             NotelistBox.TabIndex = 4;
             NotelistBox.SelectedIndexChanged += NoteListBox_SelectedIndexChanged;
             NotelistBox.DoubleClick += NoteListBox_DoubleClick;
@@ -279,30 +296,31 @@
             // CategoryComboBox
             // 
             CategoryComboBox.FormattingEnabled = true;
-            CategoryComboBox.Location = new Point(263, 29);
+            CategoryComboBox.Location = new Point(124, 14);
+            CategoryComboBox.Margin = new Padding(1);
             CategoryComboBox.Name = "CategoryComboBox";
-            CategoryComboBox.Size = new Size(302, 49);
+            CategoryComboBox.Size = new Size(144, 28);
             CategoryComboBox.TabIndex = 3;
             CategoryComboBox.SelectedIndexChanged += CategoryComboBox_SelectedIndexChanged;
             // 
             // ShowCategoryLabel
             // 
             ShowCategoryLabel.AutoSize = true;
-            ShowCategoryLabel.Location = new Point(30, 29);
+            ShowCategoryLabel.Location = new Point(14, 14);
+            ShowCategoryLabel.Margin = new Padding(1, 0, 1, 0);
             ShowCategoryLabel.Name = "ShowCategoryLabel";
-            ShowCategoryLabel.Size = new Size(227, 41);
+            ShowCategoryLabel.Size = new Size(112, 20);
             ShowCategoryLabel.TabIndex = 2;
             ShowCategoryLabel.Text = "Show Category:";
             // 
             // MainForm
             // 
-            AutoScaleDimensions = new SizeF(17F, 41F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(2176, 1044);
+            ClientSize = new Size(905, 509);
             Controls.Add(panel);
             Controls.Add(menuStrip);
             MainMenuStrip = menuStrip;
-            Margin = new Padding(6);
             Name = "MainForm";
             Text = "NoteApp";
             FormClosed += MainForm_FormClosed;

@@ -1,0 +1,59 @@
+; Имя приложения
+#define   Name       "Note App"
+; Версия приложения
+#define   Version    "1.0.0"
+; Фирма-разработчик
+#define   Publisher  "Anastasia Avdeychuk"
+; Имя исполняемого модуля
+#define   ExeName    "NoteAppUI.exe"
+
+;------------------------------------------------------------------------------
+;   Параметры установки
+;------------------------------------------------------------------------------
+[Setup]
+
+; Уникальный идентификатор приложения, 
+;сгенерированный через Tools -> Generate GUID
+AppId={{1A9EB402-473B-4828-8ED0-4FCC992F19DB}
+
+; Прочая информация, отображаемая при установке
+AppName=NoteApp
+AppVersion=1.0.0
+
+; Путь установки по-умолчанию
+DefaultDirName={pf}\{#Name}
+; Имя группы в меню "Пуск"
+DefaultGroupName={#Name}
+
+; Каталог, куда будет записан собранный setup и имя исполняемого файла
+OutputBaseFileName=NoteApp
+
+; Файл иконки
+SetupIconFile="{Путь к папке}\NoteApp\icon.ico"
+
+;------------------------------------------------------------------------------
+;   Опционально - некоторые задачи, которые надо выполнить при установке
+;------------------------------------------------------------------------------
+[Tasks]
+; Создание иконки на рабочем столе
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+
+;------------------------------------------------------------------------------
+;   Файлы, которые надо включить в пакет установщика
+;------------------------------------------------------------------------------
+[Files]
+
+; Исполняемый файл
+Source: "{Путь к папке}NoteApp\NoteApp\NoteAppUI\bin\Debug\net8.0-windows\NoteAppUI.exe"; DestDir: "{app}"; Flags: ignoreversion
+
+; Прилагающиеся ресурсы
+Source: "{Путь к папке}NoteApp\NoteApp\NoteAppUI\bin\Debug\net8.0-windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+;------------------------------------------------------------------------------
+;   Указываем установщику, где он должен взять иконки
+;------------------------------------------------------------------------------ 
+[Icons]
+
+Name: "{group}\{#Name}"; Filename: "{app}\{#ExeName}"
+
+Name: "{commondesktop}\{#Name}"; Filename: "{app}\{#ExeName}"; Tasks: desktopicon

@@ -25,6 +25,8 @@ namespace NoteAppUI
             removeNoteToolStripMenuItem.ShortcutKeys = Keys.Delete;
             aboutToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.O;
             exitToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Q;
+
+            this.SetNotChangedSize();
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -40,7 +42,7 @@ namespace NoteAppUI
 
         private void NoteListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ChangeNote();
+            ChangeNote(null);
         }
 
         private void editNoteToolStripMenuItem_Click(object sender, EventArgs e)
@@ -86,27 +88,21 @@ namespace NoteAppUI
 
         private void CategoryComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var item = CategoryComboBox.SelectedItem?.ToString()?.ToLower();
-            if (item == null || item.Equals("all", StringComparison.OrdinalIgnoreCase))
-            {
-                _project.FilteredNotes = _project.Notes;
-            }
-            else
-
-            {
-                _project.FilteredNotes = _project.Notes.Where(x => x.Type.ToString().ToLower() == item).ToList();
-            }
-
-            ChangeNote();
             SetBindingNoteListBox();
+
+            //if (d?.Type.ToString() == item)
+            //    ChangeNote(_project.SelectedNote);
+            //else
+                ChangeNote(null);
+            
         }
 
         /// <summary>
         /// Смена заметки
         /// </summary>
-        private void ChangeNote()
+        private void ChangeNote(Note? selectedNote)
         {
-            var item = NotelistBox.SelectedItem;
+            var item = selectedNote ?? NotelistBox.SelectedItem;
             _project.SelectedNote = item is not Note note ? null : note;
             SetDate(CreateDatePicker, _project.SelectedNote?.CreatedDateTime);
             SetDate(ModifiedDatePicker, _project.SelectedNote?.ModifiedDateTime);
@@ -127,7 +123,7 @@ namespace NoteAppUI
             }
             else
             {
-                dateTimePicker.CustomFormat = "dd/MM/yyyy hh:mm:ss";
+                dateTimePicker.CustomFormat = "dd/MM/yyyy HH:mm:ss";
                 dateTimePicker.Value = dateTime.Value;
             }
         }
@@ -143,7 +139,11 @@ namespace NoteAppUI
             var noteEditForm = new NoteEditForm(_project);
 
             noteEditForm.ShowDialog();
-            CategoryComboBox.DataSource = _project.GetNoteTypeListWithAll().OrderBy(x => x).ToList();
+            var selectedCategory = _project.SelectedNote.Type.ToString().ToLower();
+            
+            CategoryComboBox.SelectedItem = _project
+                .GetNoteTypeListWithAll()
+                .FirstOrDefault(x => x.ToLower() == selectedCategory);
         }
 
         /// <summary>
@@ -152,7 +152,21 @@ namespace NoteAppUI
         private void AddNote()
         {
             _project.SelectedNote = _project.CreateNote();
-            CategoryComboBox.DataSource = _project.GetNoteTypeListWithAll().OrderBy(x => x).ToList();
+            var noteEditForm = new NoteEditForm(_project);
+
+            var dialogResut = noteEditForm.ShowDialog();
+            if (dialogResut == DialogResult.Cancel)
+            {
+                _project.RemoveNote(_project.SelectedNote);
+                return;
+            }
+
+            var selectedCategory = _project.SelectedNote.Type.ToString().ToLower();
+
+            CategoryComboBox.SelectedItem = _project
+                .GetNoteTypeListWithAll()
+                .FirstOrDefault(x => x.ToLower() == selectedCategory);
+            SetBindingNoteListBox();
         }
 
         /// <summary>
@@ -161,9 +175,17 @@ namespace NoteAppUI
         private void DeleteNote()
         {
             if (_project.SelectedNote == null) return;
-            _project.RemoveNote(_project.SelectedNote);
-            NotelistBox.DataSource = null;
-            NotelistBox.DataSource = _project.Notes;
+            var messageBox = MessageBox.Show($"Вы уверены что хотите удалить заметку {_project.SelectedNote.Name}", "Внимание", MessageBoxButtons.YesNo, MessageBoxIcon.Question); ;
+
+            if (messageBox == DialogResult.Yes)
+            {
+                _project.RemoveNote(_project.SelectedNote);
+                NotelistBox.DataSource = null;
+                NotelistBox.DataSource = _project.Notes;
+                CategoryComboBox.SelectedItem = _project
+                .GetNoteTypeListWithAll()
+                .FirstOrDefault(x => x.ToLower() == "all");
+            }
         }
 
         /// <summary>
@@ -171,12 +193,24 @@ namespace NoteAppUI
         /// </summary>
         private void SetBindingNoteListBox()
         {
+            var selectedNote = _project.SelectedNote;
+            var item = CategoryComboBox.SelectedItem?.ToString()?.ToLower();
+            if (item == null || item.Equals("all", StringComparison.OrdinalIgnoreCase))
+                _project.FilteredNotes = _project.Notes;
+            else
+                _project.FilteredNotes = _project.Notes.Where(x => x.Type.ToString().ToLower() == item).ToList();
+
             NotelistBox.DataSource = null;
             var binding = new BindingList<Note>(_project.FilteredNotes);
             var bSource = new BindingSource();
             bSource.DataSource = binding;
             NotelistBox.DataSource = bSource;
             NotelistBox.DisplayMember = "Name";
+            if (selectedNote != null)
+            {
+                NotelistBox.SelectedItem = selectedNote;
+
+            }
         }
 
         /// <summary>
@@ -184,14 +218,21 @@ namespace NoteAppUI
         /// </summary>
         private void SetBinding()
         {
-            if (_project.SelectedNote == null)
-                return;
             NoteRichTextBox.DataBindings.Clear();
-            NoteRichTextBox.DataBindings.Add("Text", _project.SelectedNote, "NoteText");
             TitleLabel.DataBindings.Clear();
-            TitleLabel.DataBindings.Add("Text", _project.SelectedNote, "Name");
             CategoryLabel.DataBindings.Clear();
-            CategoryLabel.DataBindings.Add("Text", _project.SelectedNote, "Type");
+            if (_project.SelectedNote == null)
+            {
+                NoteRichTextBox.Text = null;
+                TitleLabel.Text = null;
+                CategoryLabel.Text = null;
+            }
+            else
+            {
+                NoteRichTextBox.DataBindings.Add("Text", _project.SelectedNote, "NoteText");
+                TitleLabel.DataBindings.Add("Text", _project.SelectedNote, "Name");
+                CategoryLabel.DataBindings.Add("Text", _project.SelectedNote, "Type");
+            }
         }
     }
 }

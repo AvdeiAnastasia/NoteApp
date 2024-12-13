@@ -23,6 +23,8 @@ namespace NoteAppUI
             CategoryComboBox.SelectedItem = _project.SelectedNote.Type;
             NoteRichTextBox.Text = _project.SelectedNote.NoteText;
 
+            this.SetNotChangedSize();
+
         }
 
         private void CancelButton_Click(object sender, EventArgs e)

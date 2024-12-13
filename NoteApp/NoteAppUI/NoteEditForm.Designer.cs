@@ -85,7 +85,7 @@
             // 
             // CreatedDatePicker
             // 
-            CreatedDatePicker.CustomFormat = "MM/dd/yyyy hh:mm:ss";
+            CreatedDatePicker.CustomFormat = "dd/MM/yyyy HH:mm:ss";
             CreatedDatePicker.Enabled = false;
             CreatedDatePicker.Format = DateTimePickerFormat.Custom;
             CreatedDatePicker.Location = new Point(181, 150);
@@ -95,7 +95,7 @@
             // 
             // ModifiedDatePicker
             // 
-            ModifiedDatePicker.CustomFormat = "MM/dd/yyyy hh:mm:ss";
+            ModifiedDatePicker.CustomFormat = "dd/MM/yyyy HH:mm:ss";
             ModifiedDatePicker.Enabled = false;
             ModifiedDatePicker.Format = DateTimePickerFormat.Custom;
             ModifiedDatePicker.Location = new Point(1009, 150);

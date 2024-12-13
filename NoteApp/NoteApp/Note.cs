@@ -88,7 +88,9 @@ namespace NoteApp
             if (string.IsNullOrWhiteSpace(name))
                 return (false, "Не заполнено имя");
             if (type == null)
-                return (false, "Не выбран тип");
+                return (false, "Не выбрана категория");
+            if (name.Length > 50)
+                return (false, "Название не должно превышать 50 символов");
 
             Name = name;
             Type = type.Value;
